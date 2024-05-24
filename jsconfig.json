@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "@/components/*": ["components/*"],
+      "@/context/*": ["context/*"],
+      "@/pages/*": ["app/pages/*"]
+    }
+  },
+  "include": ["app/**/*", "components/**/*", "context/**/*"]
+}
