@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { DirectionsRenderer, GoogleMap, MarkerF, OverlayView, useJsApiLoader } from '@react-google-maps/api';
-import { SourceContext } from '@/context/SourceContext';
-import { DestinationContext } from '@/context/DestinationContext';
+import { SourceContext } from '../../context/SourceContext';
+import { DestinationContext } from '../../context/DestinationContext';
 
 function GoogleMapSection() {
   const containerStyle = {

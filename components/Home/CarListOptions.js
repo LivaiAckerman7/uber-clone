@@ -1,10 +1,11 @@
 import { CarListData } from '../../utils/CarListData'
 import CarListitem from './CarListitem'
 import React, { useState } from 'react'
-
+import {useRouter} from 'next/navigation';
 function CarListOptions({distance}) {
   const [activeIndex, setActiveIndex] = useState(null);
   const [selectedCar, setSelectedCar] = useState(null);
+  const router=useRouter();
   return (
     <div className='mt-6 p-5 overflow-y-auto' style={{ height: '250px' }}>
       <h2 className='text-[22px] font-bold'>Recommandé</h2>
@@ -25,7 +26,9 @@ function CarListOptions({distance}) {
           w-full md:w-[30%] border-[1px] items-center' >
               <h2>Commander pour</h2>
               <button className='
-              p-3 bg-black text-white rounded-lg text-center '>Commander {selectedCar.name}</button>
+              p-3 bg-black text-white rounded-lg text-center '
+              onClick={()=>router.push('/payment?amount=' +(selectedCar.amount*distance).toFixed(2))}
+              >Commander {selectedCar.name}</button>
            </div>:null}
 
     </div>
