@@ -3,6 +3,7 @@ import { DirectionsRenderer, GoogleMap, MarkerF, OverlayView, useJsApiLoader } f
 import { SourceContext } from '../../context/SourceContext';
 import { DestinationContext } from '../../context/DestinationContext';
 
+
 function GoogleMapSection() {
   const containerStyle = {
     width: '100%',
@@ -16,6 +17,7 @@ function GoogleMapSection() {
 
   const { source, setSource } = useContext(SourceContext);
   const { destination, setDestination } = useContext(DestinationContext);
+  
 
   const [map, setMap] = useState(null);
   const [directionRoutePoints, setDirectionRoutePoints] = useState(null);

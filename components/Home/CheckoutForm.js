@@ -39,12 +39,15 @@ function CheckoutForm({ amount }) {
   };
 
   return (
+    
     <div className='flex flex-col justify-center items-center w-full mt-12'>
+      <div className='border-2 border-black rounded-lg p-6 shadow-lg max-w-md w-full '>
       <h2 className='m-5 font-bold'>Somme à payer : {amount} FCFA</h2>
       <form onSubmit={handleSubmit} className='max-w-md'>
         <PaymentElement />
         <button className='w-full bg-black text-white p-2 rounded-lg mt-2'>Payer</button>
       </form>
+    </div>
     </div>
   );
 }
