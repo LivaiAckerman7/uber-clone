@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { DirectionsRenderer, GoogleMap, MarkerF, OverlayView, useJsApiLoader } from '@react-google-maps/api';
+import { DirectionsRenderer, GoogleMap, MarkerF, OverlayView } from '@react-google-maps/api';
 import { SourceContext } from '../../context/SourceContext';
 import { DestinationContext } from '../../context/DestinationContext';
-
 
 function GoogleMapSection() {
   const containerStyle = {
@@ -17,12 +16,12 @@ function GoogleMapSection() {
 
   const { source, setSource } = useContext(SourceContext);
   const { destination, setDestination } = useContext(DestinationContext);
-  
 
   const [map, setMap] = useState(null);
   const [directionRoutePoints, setDirectionRoutePoints] = useState(null);
-  const [distance, setDistance] = useState(null); // Ajouté : état pour la distance
-  const [midPoint, setMidPoint] = useState(null); // Ajouté : état pour le point à mi-chemin
+  const [distance, setDistance] = useState(null);
+  const [midPoint, setMidPoint] = useState(null);
+  const [taxis, setTaxis] = useState([]); // Ajouté : état pour les taxis
 
   useEffect(() => {
     if (source && source.lat && map) {
@@ -35,6 +34,9 @@ function GoogleMapSection() {
         lat: source.lat,
         lng: source.lng
       });
+
+      // Récupérer les taxis proches
+      fetchNearbyTaxis(source.lat, source.lng);
     }
 
     if (source && source.lat && destination && destination.lat) {
@@ -85,6 +87,23 @@ function GoogleMapSection() {
       const midLat = (source.lat + destination.lat) / 2;
       const midLng = (source.lng + destination.lng) / 2;
       setMidPoint({ lat: midLat, lng: midLng }); // Mettre à jour l'état du point à mi-chemin
+    }
+  };
+
+  const fetchNearbyTaxis = async (lat, lng) => {
+    try {
+      const response = await fetch('http://localhost:5000/nearby-taxis', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ latitude: lat, longitude: lng }),
+      });
+
+      const data = await response.json();
+      setTaxis(data);
+    } catch (error) {
+      console.error('Error fetching nearby taxis:', error);
     }
   };
 
@@ -163,6 +182,29 @@ function GoogleMapSection() {
         </OverlayView>
       ) : null}
 
+      {taxis.map((taxi, index) => (
+        <MarkerF
+          key={index}
+          position={{ lat: taxi.location.coordinates[1], lng: taxi.location.coordinates[0] }}
+          icon={{
+            url: "/taxi-icon.png", // Remplacez par l'URL de l'icône de taxi
+            scaledSize: {
+              width: 30,
+              height: 30
+            }
+          }}
+        >
+          <OverlayView
+            position={{ lat: taxi.location.coordinates[1], lng: taxi.location.coordinates[0] }}
+            mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+          >
+            <div className='p-2 bg-yellow-500 font-bold inline-block'>
+              <p className='text-black text-[16px]'>{taxi.label}</p>
+            </div>
+          </OverlayView>
+        </MarkerF>
+      ))}
+
       <DirectionsRenderer
         directions={directionRoutePoints}
         options={{
@@ -174,9 +216,7 @@ function GoogleMapSection() {
         }}
       />
     </GoogleMap>
-    
   );
-  
 }
 
 export default GoogleMapSection;

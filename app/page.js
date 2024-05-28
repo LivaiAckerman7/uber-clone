@@ -12,10 +12,7 @@ import Header from "../components/Header";
 
 
 export default function Home() {
-  const client = new Client();
-  client
-    .setEndpoint('https://cloud.appwrite.io/v1')
-    .setProject('6654a3290027b69f139c');
+  
   const [source,setSource]=useState([])
   const [destination,setDestination]=useState([])
   return (
