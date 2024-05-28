@@ -11,7 +11,7 @@ module.exports = async function (req, res) {
         .setKey('b58d5db9d102e25eca21c1adad4ccea34680e8af454d51e5cd668cafbc0acd41b3085e01d327d506330e7c13f39cf152767035ed1ed2c891d935eec0834b569bf096c56333e23c6eb738c6bd252f54c65324201af110990fca922ff33bb1b49b9c4b7924094e03794c9d4efc149da4c71bc2488f965ea4a0534a7a505acd040c'); // Votre clé API
 
     try {
-        const taxis = await database.listDocuments('YOUR_DATABASE_ID', 'taxis', [
+        const taxis = await database.listDocuments('6654b643003090dbd830git add .git add .', 'taxis', [
             sdk.Query.near('latitude', latitude, longitude, 5000), // Requête géospatiale à 5 km
         ]);
 
