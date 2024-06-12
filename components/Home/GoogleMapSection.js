@@ -187,10 +187,10 @@ function GoogleMapSection() {
           key={index}
           position={{ lat: taxi.latitude, lng: taxi.longitude }}
           icon={{
-            url: "/taxi-icon.png",
+            url: "/taxi.png",
             scaledSize: {
-              width: 30,
-              height: 30
+              width: 40,
+              height: 40
             }
           }}
         >
