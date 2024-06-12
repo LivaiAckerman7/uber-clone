@@ -1,25 +1,31 @@
-'use client'
+'use client';
 import { DestinationContext } from '../../context/DestinationContext';
 import { SourceContext } from '../../context/SourceContext';
-import { useContext, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import CarListOptions from './CarListOptions';
 import InputItem from './InputItem';
 
 function SearchSection() {
   const { source, setSource } = useContext(SourceContext);
   const { destination, setDestination } = useContext(DestinationContext);
-  const [distance, setDistance] = useState(null); // Ajouté : état pour stocker la distance
-  
+  const [distance, setDistance] = useState(null);
+
+  useEffect(() => {
+    console.log('Source:', source);
+    console.log('Destination:', destination);
+  }, [source, destination]);
 
   const calculateDistance = () => {
-    if (source && destination) {
+    if (source && destination && source.lat && source.lng && destination.lat && destination.lng) {
       const dist = google.maps.geometry.spherical.computeDistanceBetween(
         new google.maps.LatLng(source.lat, source.lng),
         new google.maps.LatLng(destination.lat, destination.lng)
       );
-      const distanceInKm = dist / 1000; // Convert meters to kilometers
-      setDistance(distanceInKm); // Modifié : mise à jour de l'état distance
-      console.log(distanceInKm);
+      const distanceInKm = dist / 1000;
+      setDistance(distanceInKm);
+      console.log('Distance (km):', distanceInKm);
+    } else {
+      console.error('Invalid source or destination coordinates:', source, destination);
     }
   };
 
@@ -48,23 +54,23 @@ function SearchSection() {
           Utiliser ma position
         </button>
 
-
         <InputItem type='source' />
         <InputItem type='destination' />
 
-        <button className='p-3 bg-black w-full mt-5 text-white rounded-lg'
-          onClick={calculateDistance}>Rechercher</button>
+        <button className='p-3 bg-black w-full mt-5 text-white rounded-lg' onClick={calculateDistance}>
+          Rechercher
+        </button>
       </div>
 
-      {distance ? ( // Modifié : ajout de la condition pour afficher la distance
+      {distance !== null && (
         <div className='p-2 bg-white font-bold inline-block mt-5'>
           <p className='text-black text-[16px]'>Distance: {distance.toFixed(2)} km</p> 
         </div>
-      ) : null}
+      )}
 
-      {distance ? <CarListOptions distance={distance} /> : null} 
+      {distance !== null && <CarListOptions distance={distance} />} 
     </div>
-  )
+  );
 }
 
 export default SearchSection;

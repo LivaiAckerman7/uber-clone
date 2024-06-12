@@ -1,13 +1,13 @@
 'use client'
-import GoogleMapSection from "../components/Home/GoogleMapSection";
-import SearchSection from "../components/Home/SearchSection";
-import { DestinationContext } from "../context/DestinationContext";
-import { SourceContext } from "../context/SourceContext";
+import GoogleMapSection from "../../../../components/Home/GoogleMapSection";
+import DriverInterface from "./DriverInterface";
+import { DestinationContext } from "../../../../context/DestinationContext";
+import { SourceContext } from "../../../../context/SourceContext";
 import { LoadScript } from "@react-google-maps/api";
 import { useState } from "react";
-import Header from "../components/Header";
+import Header from "../../../../components/Header";
 
-export default function Home() {
+export default function DriverHome() {
   const [source, setSource] = useState({ lat: null, lng: null, label: '' });
   const [destination, setDestination] = useState({ lat: null, lng: null, label: '' });
 
@@ -22,7 +22,7 @@ export default function Home() {
           >
             <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-5">
               <div>
-                <SearchSection />
+                <DriverInterface />
               </div>
               <div className="col-span-2">
                 <GoogleMapSection />

@@ -9,19 +9,38 @@ function GoogleMapSection() {
     height: window.innerWidth * 0.45 + 'px'
   };
 
+  const { source, setSource } = useContext(SourceContext);
+  const { destination, setDestination } = useContext(DestinationContext);
+
   const [center, setCenter] = useState({
     lat: 14.6919,
     lng: -17.4474
   });
 
-  const { source, setSource } = useContext(SourceContext);
-  const { destination, setDestination } = useContext(DestinationContext);
-
   const [map, setMap] = useState(null);
   const [directionRoutePoints, setDirectionRoutePoints] = useState(null);
   const [distance, setDistance] = useState(null);
   const [midPoint, setMidPoint] = useState(null);
-  const [taxis, setTaxis] = useState([]); // Ajouté : état pour les taxis
+  const [taxis, setTaxis] = useState([]);
+
+  // Fonction pour récupérer les taxis à proximité
+  const fetchNearbyTaxis = async (lat, lng) => {
+    try {
+      const response = await fetch('http://localhost:5000/nearby-taxis', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ latitude: lat, longitude: lng, radius: 5000 }), // radius in meters
+      });
+
+      const data = await response.json();
+      console.log('Nearby taxis:', data); // Debug log
+      setTaxis(data);
+    } catch (error) {
+      console.error('Error fetching nearby taxis:', error);
+    }
+  };
 
   useEffect(() => {
     if (source && source.lat && map) {
@@ -35,7 +54,6 @@ function GoogleMapSection() {
         lng: source.lng
       });
 
-      // Récupérer les taxis proches
       fetchNearbyTaxis(source.lat, source.lng);
     }
 
@@ -43,7 +61,7 @@ function GoogleMapSection() {
       directionRoute();
       calculateDistance();
     }
-  }, [source]);
+  }, [source, map, destination]);
 
   useEffect(() => {
     if (destination && destination.lat && map) {
@@ -57,7 +75,7 @@ function GoogleMapSection() {
       directionRoute();
       calculateDistance();
     }
-  }, [destination]);
+  }, [destination, map, source]);
 
   const directionRoute = () => {
     const DirectionsService = new google.maps.DirectionsService();
@@ -80,30 +98,12 @@ function GoogleMapSection() {
         new google.maps.LatLng(source.lat, source.lng),
         new google.maps.LatLng(destination.lat, destination.lng)
       );
-      const distanceInKm = dist / 1000; // Convert meters to kilometers
-      setDistance(distanceInKm); // Mettre à jour l'état de la distance
+      const distanceInKm = dist / 1000;
+      setDistance(distanceInKm);
 
-      // Calculer le point à mi-chemin
       const midLat = (source.lat + destination.lat) / 2;
       const midLng = (source.lng + destination.lng) / 2;
-      setMidPoint({ lat: midLat, lng: midLng }); // Mettre à jour l'état du point à mi-chemin
-    }
-  };
-
-  const fetchNearbyTaxis = async (lat, lng) => {
-    try {
-      const response = await fetch('http://localhost:5000/nearby-taxis', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ latitude: lat, longitude: lng }),
-      });
-
-      const data = await response.json();
-      setTaxis(data);
-    } catch (error) {
-      console.error('Error fetching nearby taxis:', error);
+      setMidPoint({ lat: midLat, lng: midLng });
     }
   };
 
@@ -185,9 +185,9 @@ function GoogleMapSection() {
       {taxis.map((taxi, index) => (
         <MarkerF
           key={index}
-          position={{ lat: taxi.location.coordinates[1], lng: taxi.location.coordinates[0] }}
+          position={{ lat: taxi.latitude, lng: taxi.longitude }}
           icon={{
-            url: "/taxi-icon.png", // Remplacez par l'URL de l'icône de taxi
+            url: "/taxi-icon.png",
             scaledSize: {
               width: 30,
               height: 30
@@ -195,11 +195,11 @@ function GoogleMapSection() {
           }}
         >
           <OverlayView
-            position={{ lat: taxi.location.coordinates[1], lng: taxi.location.coordinates[0] }}
+            position={{ lat: taxi.latitude, lng: taxi.longitude }}
             mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
           >
             <div className='p-2 bg-yellow-500 font-bold inline-block'>
-              <p className='text-black text-[16px]'>{taxi.label}</p>
+              <p className='text-black text-[16px]'>{taxi.name}</p>
             </div>
           </OverlayView>
         </MarkerF>
