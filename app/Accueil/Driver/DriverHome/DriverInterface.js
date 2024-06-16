@@ -6,11 +6,27 @@ function DriverInterface() {
   const [status, setStatus] = useState('disponible');
 
   useEffect(() => {
+    const updatePosition = (position) => {
+      const { latitude, longitude } = position.coords;
+      setSource({ lat: latitude, lng: longitude, label: 'Ma position' });
+
+      // Envoyer la position mise à jour au serveur
+      fetch('http://localhost:5000/update-location', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          driver_id: 1, // Utilise l'ID réel du chauffeur
+          name: 'Taxi 1',
+          latitude: latitude,
+          longitude: longitude,
+        }),
+      }).catch(error => console.error('Error updating location:', error));
+    };
+
     const watchId = navigator.geolocation.watchPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        setSource({ lat: latitude, lng: longitude, label: 'Ma position' });
-      },
+      updatePosition,
       (error) => {
         console.error("Error getting location", error);
       },
@@ -46,7 +62,7 @@ function DriverInterface() {
         </div>
       </div>
     </div>
-  );
+  );  
 }
 
 export default DriverInterface;
