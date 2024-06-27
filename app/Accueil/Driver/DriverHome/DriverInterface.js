@@ -1,22 +1,24 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { GoogleMap, MarkerF, useLoadScript } from '@react-google-maps/api';
 import { SourceContext } from '../../../../context/SourceContext';
+import io from 'socket.io-client';
 
-const libraries = ['places'];
+const socket = io('http://localhost:5000', {
+  withCredentials: true,
+  extraHeaders: {
+    "my-custom-header": "abcd"
+  }
+});
 
 function DriverInterface() {
   const { source, setSource } = useContext(SourceContext);
   const [status, setStatus] = useState('disponible');
-
-  const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_API_KEY,
-    libraries,
-  });
+  const [messages, setMessages] = useState([]);
+  const driver_id = 1; // Utilisez l'ID réel du chauffeur
 
   useEffect(() => {
     const updatePosition = (position) => {
       const { latitude, longitude } = position.coords;
-      setSource({ lat: latitude, lng: longitude });
+      setSource({ lat: latitude, lng: longitude, label: 'Ma position' });
 
       // Envoyer la position mise à jour au serveur
       fetch('http://localhost:5000/update-location', {
@@ -25,11 +27,10 @@ function DriverInterface() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          driver_id: 1, // Utilise l'ID réel du chauffeur
+          driver_id: driver_id,
           name: 'Taxi 1',
           latitude: latitude,
           longitude: longitude,
-          status: status
         }),
       }).catch(error => console.error('Error updating location:', error));
     };
@@ -49,14 +50,26 @@ function DriverInterface() {
     return () => {
       navigator.geolocation.clearWatch(watchId);
     };
-  }, [setSource, status]);
+  }, [setSource, driver_id]);
+
+  useEffect(() => {
+    // Rejoindre la salle du chauffeur
+    socket.emit('join', driver_id);
+
+    socket.on('ride-request', (data) => {
+      const message = `You have a new ride request from ${data.client} from ${data.source.label} to ${data.destination.label}`;
+      setMessages((prevMessages) => [...prevMessages, message]);
+    });
+
+    return () => {
+      socket.off('ride-request');
+    };
+  }, [driver_id]);
 
   const handleStatusChange = (newStatus) => {
     setStatus(newStatus);
+    // Logique pour mettre à jour le statut du chauffeur dans la base de données
   };
-
-  if (loadError) return <div>Error loading maps</div>;
-  if (!isLoaded) return <div>Loading Maps...</div>;
 
   return (
     <div>
@@ -71,25 +84,19 @@ function DriverInterface() {
             Occupé
           </button>
         </div>
+        <div className='mt-5'>
+          <p className='text-[16px] font-bold'>Messages :</p>
+          <div className='bg-gray-100 p-3 rounded-lg h-32 overflow-y-auto'>
+            {messages.length === 0 ? (
+              <p className='text-gray-500'>Aucun message</p>
+            ) : (
+              messages.map((message, index) => (
+                <p key={index} className='text-black text-[14px]'>{message}</p>
+              ))
+            )}
+          </div>
+        </div>
       </div>
-      <GoogleMap
-        mapContainerStyle={{ width: '100%', height: '400px' }}
-        center={{ lat: source.lat || 14.6919, lng: source.lng || -17.4474 }}
-        zoom={15}
-      >
-        {source && source.lat && (
-          <MarkerF
-            position={{ lat: source.lat, lng: source.lng }}
-            icon={{
-              url: "/car-icon.png", // Utilise l'icône du taxi
-              scaledSize: {
-                width: 30,
-                height: 30
-              }
-            }}
-          />
-        )}
-      </GoogleMap>
     </div>
   );
 }
