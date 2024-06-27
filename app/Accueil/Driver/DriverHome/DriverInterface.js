@@ -1,14 +1,22 @@
 import React, { useEffect, useState, useContext } from 'react';
+import { GoogleMap, MarkerF, useLoadScript } from '@react-google-maps/api';
 import { SourceContext } from '../../../../context/SourceContext';
+
+const libraries = ['places'];
 
 function DriverInterface() {
   const { source, setSource } = useContext(SourceContext);
   const [status, setStatus] = useState('disponible');
 
+  const { isLoaded, loadError } = useLoadScript({
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_API_KEY,
+    libraries,
+  });
+
   useEffect(() => {
     const updatePosition = (position) => {
       const { latitude, longitude } = position.coords;
-      setSource({ lat: latitude, lng: longitude, label: 'Ma position' });
+      setSource({ lat: latitude, lng: longitude });
 
       // Envoyer la position mise à jour au serveur
       fetch('http://localhost:5000/update-location', {
@@ -21,6 +29,7 @@ function DriverInterface() {
           name: 'Taxi 1',
           latitude: latitude,
           longitude: longitude,
+          status: status
         }),
       }).catch(error => console.error('Error updating location:', error));
     };
@@ -40,12 +49,14 @@ function DriverInterface() {
     return () => {
       navigator.geolocation.clearWatch(watchId);
     };
-  }, [setSource]);
+  }, [setSource, status]);
 
   const handleStatusChange = (newStatus) => {
     setStatus(newStatus);
-    // Logique pour mettre à jour le statut du chauffeur dans la base de données
   };
+
+  if (loadError) return <div>Error loading maps</div>;
+  if (!isLoaded) return <div>Loading Maps...</div>;
 
   return (
     <div>
@@ -61,8 +72,26 @@ function DriverInterface() {
           </button>
         </div>
       </div>
+      <GoogleMap
+        mapContainerStyle={{ width: '100%', height: '400px' }}
+        center={{ lat: source.lat || 14.6919, lng: source.lng || -17.4474 }}
+        zoom={15}
+      >
+        {source && source.lat && (
+          <MarkerF
+            position={{ lat: source.lat, lng: source.lng }}
+            icon={{
+              url: "/car-icon.png", // Utilise l'icône du taxi
+              scaledSize: {
+                width: 30,
+                height: 30
+              }
+            }}
+          />
+        )}
+      </GoogleMap>
     </div>
-  );  
+  );
 }
 
 export default DriverInterface;

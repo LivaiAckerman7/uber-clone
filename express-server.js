@@ -18,18 +18,18 @@ app.use(cors());
 app.use(bodyParser.json());
 
 app.post('/update-location', async (req, res) => {
-  const { driver_id, name, latitude, longitude } = req.body;
+  const { driver_id, name, latitude, longitude, status } = req.body;
   console.log('Received request:', req.body);
 
   try {
     await pool.query(
-      `INSERT INTO taxis (driver_id, name, location, updated_at)
-       VALUES ($1, $2, ST_SetSRID(ST_MakePoint($3, $4), 4326), NOW())
+      `INSERT INTO taxis (driver_id, name, location, status, updated_at)
+       VALUES ($1, $2, ST_SetSRID(ST_MakePoint($3, $4), 4326), $5, NOW())
        ON CONFLICT (driver_id)
-       DO UPDATE SET name = $2, location = ST_SetSRID(ST_MakePoint($3, $4), 4326), updated_at = NOW()`,
-      [driver_id, name, longitude, latitude]
+       DO UPDATE SET name = $2, location = ST_SetSRID(ST_MakePoint($3, $4), 4326), status = $5, updated_at = NOW()`,
+      [driver_id, name, longitude, latitude, status]
     );
-    res.status(200).json({ success: true, message: 'Location updated successfully' });
+    res.status(200).json({ success: true, message: 'Location and status updated successfully' });
   } catch (error) {
     console.error('Error updating location', error);
     res.status(500).json({ success: false, message: 'Internal Server Error' });
@@ -42,14 +42,14 @@ app.post('/nearby-taxis', async (req, res) => {
 
   try {
     const result = await pool.query(
-      `SELECT driver_id, name, ST_X(location::geometry) AS longitude, ST_Y(location::geometry) AS latitude, updated_at
+      `SELECT driver_id, name, ST_X(location::geometry) AS longitude, ST_Y(location::geometry) AS latitude, status, updated_at
        FROM taxis
        WHERE ST_DWithin(
          location,
-         ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography,
+         ST_SetSRID(ST_MakePoint($2, $1), 4326)::geography,
          $3
        )`,
-      [longitude, latitude, radius]
+      [latitude, longitude, radius]
     );
     console.log('Nearby taxis response:', result.rows);
     res.status(200).json(result.rows);
