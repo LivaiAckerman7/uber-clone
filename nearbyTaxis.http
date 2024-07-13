@@ -1,0 +1,8 @@
+POST http://localhost:5000/nearby-taxis
+Content-Type: application/json
+
+{
+  "latitude": 14.6919,
+  "longitude": -17.4474,
+  "radius": 5000
+}

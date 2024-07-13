@@ -1,0 +1,9 @@
+POST http://localhost:5000/update-location
+Content-Type: application/json
+
+{
+  "driver_id": 1,
+  "name": "Taxi 1",
+  "latitude": 14.6919,
+  "longitude": -17.4474
+}
