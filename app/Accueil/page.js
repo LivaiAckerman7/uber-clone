@@ -26,8 +26,6 @@ function Accueil() {
     animate: { transition: { staggerChildren: 0.2 } },
   };
 
-
-
   return (
     <div className='flex flex-col min-h-screen'>
       <div className='fixed top-0 left-0 w-full h-12.5 p-5 pb-3 pl-10 flex items-center justify-between bg-black text-white z-50'>
@@ -43,7 +41,7 @@ function Accueil() {
         </ul>
       </div>
 
-      <div className='pt-32 flex-grow'> {/* Ajoutez une marge supérieure pour compenser la hauteur de la navbar */}
+      <div className='pt-32 flex-grow'>
         <div className='relative w-full'>
           <motion.img src='/chauffeur-taxi.jpg' alt='Banner' className='w-full h-auto object-cover filter blur-sm brightness-50' initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }} />
           <motion.div className='absolute inset-0 flex items-center justify-center' initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5, duration: 1 }}>
@@ -51,7 +49,6 @@ function Accueil() {
           </motion.div>
         </div>
 
-        {/* Ajoutez plus de contenu ici pour permettre le défilement */}
         <motion.div className='p-7 flex items-start mt-40 space-x-8' variants={staggerContainer} initial='initial' animate='animate'>
           <motion.img src='/chauffeur de taxi bis.jpg' className='w-1/2 h-auto' variants={fadeInUp} />
           <motion.div variants={fadeInUp}>
@@ -60,11 +57,9 @@ function Accueil() {
             </h1>
             <p className='mt-4 text-xl'>
               Commander dès maintenant votre taxi sans plus attendre 
-            
-                  
             </p>
             <div className='mt-4'>
-              <button className='bg-black text-white font-semibold py-2 px-4 rounded-xl' onClick={() => router.push('/')}>
+              <button className='bg-black text-white font-semibold py-2 px-4 rounded-xl' onClick={() => router.push('/sig-in')}>
                 Chercher un taxi
               </button>
               <p className='mt-8'>
@@ -89,6 +84,24 @@ function Accueil() {
             </div>
           </motion.div>
           <motion.img src='/Taxi canva.png' className='w-1/2 h-auto' variants={fadeInUp} />
+        </motion.div>
+
+        {/* Section pour devenir chauffeur */}
+        <motion.div className='p-24 flex items-start mt-40 space-x-8' variants={staggerContainer} initial='initial' animate='animate'>
+          <motion.div variants={fadeInUp}>
+            <h1 className='text-6xl md:text-6xl lg:text-6xl font-bold text-black leading-relaxed break-words'>
+              Rejoignez notre équipe de chauffeurs
+            </h1>
+            <p className='mt-4 text-xl'>
+              Vous souhaitez devenir chauffeur de taxi ? Rejoignez-nous dès maintenant et profitez des nombreux avantages offerts par Sunu Taxi.
+            </p>
+            <div className='mt-4'>
+              <button className='bg-black text-white font-semibold py-2 px-4 rounded-xl' onClick={() => router.push('/Accueil/InscriptionDriver')}>
+                Devenir chauffeur
+              </button>
+            </div>
+          </motion.div>
+          <motion.img src='/Devenir-chauffeur.png' className='w-1/2 h-auto' variants={fadeInUp} />
         </motion.div>
       </div>
 
