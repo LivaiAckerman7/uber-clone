@@ -134,7 +134,7 @@ function GoogleMapSection() {
       destination: destination
     });
 
-    alert(`Demande de course envoyée au chauffeur ${taxi.name}`);
+    alert(`Réservation de course reçue chauffeur ${taxi.name} voir map`);
   };
 
   return (

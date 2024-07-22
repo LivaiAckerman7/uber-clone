@@ -1,9 +1,9 @@
 export const CarListData = [
     {
         id: 1,
-        name: 'Taxi X',
+        name: 'Taxi 1',
         seat: 4,
-        desc: 'Disponible tous les jours. Confort et rapidité garantis!',
+        desc: 'Numéro chauffeur : 778407952',
         amount: 400,
         image: '/Taxi.webp',
         width: 200,

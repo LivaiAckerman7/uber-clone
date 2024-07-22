@@ -51,7 +51,7 @@ function SearchSection() {
         <p className='text-[20px] font-bold'>Chercher un taxi</p>
          
         <button className='p-3 bg-black w-full mt-5 text-white rounded-lg' onClick={handleUseMyLocation}>
-          Utiliser ma position
+          Voir position
         </button>
 
         <InputItem type='source' />
