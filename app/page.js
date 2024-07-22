@@ -13,7 +13,10 @@ export default function Home() {
 
   return (
     <>
+<<<<<<< HEAD
+=======
     
+>>>>>>> d445bb0682b14c580c6cc62accd3663ed835fd5b
       <Header />
       <SourceContext.Provider value={{ source, setSource }}>
         <DestinationContext.Provider value={{ destination, setDestination }}>
@@ -23,7 +26,10 @@ export default function Home() {
           >
             <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-5">
               <div>
+<<<<<<< HEAD
+=======
               
+>>>>>>> d445bb0682b14c580c6cc62accd3663ed835fd5b
                 <SearchSection />
               </div>
               <div className="col-span-2">
