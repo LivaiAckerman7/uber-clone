@@ -20,10 +20,7 @@
     "@stripe/stripe-js": "^3.4.1",
     "appwrite": "^14.0.1",
     "body-parser": "^1.20.2",
-<<<<<<< HEAD
     "cors": "^2.8.5",
-=======
->>>>>>> d445bb0682b14c580c6cc62accd3663ed835fd5b
     "express": "^4.19.2",
     "firebase": "^10.12.2",
     "formik": "^2.4.6",
