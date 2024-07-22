@@ -136,8 +136,4 @@ io.on('connection', (socket) => {
 // Utilisez server.listen au lieu de app.listen
 server.listen(port, () => {
   console.log(`Express server started on http://localhost:${port}`);
-<<<<<<< HEAD
 });
-=======
-});
->>>>>>> d445bb0682b14c580c6cc62accd3663ed835fd5b
